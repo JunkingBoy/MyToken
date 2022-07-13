@@ -1,4 +1,4 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
@@ -78,14 +78,25 @@ describe("JunToken", function () {
 
     describe("test check user balance", function () {
         it('call the function check', async function () {
-            const { owner, dev, third, jtb } = await loadFixture(getJunToken);
+            const { owner, dev, jtb } = await loadFixture(getJunToken);
 
             expect(await jtb.balanceOf(dev.address)).to.equal(0);
-            await jtb.transfer(dev.address, BigNumber.from("100"));
+            await jtb.connect(owner).sendToken(dev.address, BigNumber.from("100"));
             expect(await jtb.balanceOf(dev.address)).to.equal(BigNumber.from("100"));
 
-            expect(await jtb.checkUserBalance(ZEROADDRESS)).to.equal(await jtb.checkUserBalance(owner.address));
             expect(await jtb.checkUserBalance(dev.address)).to.equal(BigNumber.from("100"));
+        });
+
+        it("call the function award", async function () {
+            const { owner, dev, jtb } = await loadFixture(getJunToken);
+
+            let initBlock = await time.latestBlock();
+            expect(await jtb.userBalance(owner.address)).to.equal(BigNumber.from("100000"));
+            expect(await jtb.lastAwardBlock()).to.equal(await time.latestBlock());
+            await expect(jtb.connect(dev).award(owner.address)).to.reverted;
+            await jtb.award(dev.address);
+            let currentBlock = await jtb.lastAwardBlock();
+            expect(await jtb.userBalance(dev.address)).to.equal(BigNumber.from(currentBlock).sub(initBlock));
         });
     });
 });

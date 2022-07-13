@@ -3,10 +3,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract JunToken is ERC20 {
+    uint256 public lastAwardBlock;
+
     address private _soleIssuer;
 
     event Sender(address indexed to, uint256 amount);
     event Burn(uint256 amount);
+    event Award(uint256 awardAmount);
 
     error UnAuthority(address caller);
     error BlackListUser(address caller);
@@ -35,6 +38,7 @@ contract JunToken is ERC20 {
         _soleIssuer = msg.sender;
         userBalance[_soleIssuer] = initAmount;
         _mint(_soleIssuer, initAmount);
+        lastAwardBlock = block.number;
     }
 
     function tokenTransfer(address from, address to, uint256 amount) external onlyIssuer checkBalance(amount, from) {
@@ -70,7 +74,7 @@ contract JunToken is ERC20 {
         }else {
             tempUser = _target;
         }
-        return ERC20(this).balanceOf(tempUser);
+        return userBalance[_target];
     }
 
     function transferIssuer(address newIssuer) external onlyIssuer {
@@ -80,5 +84,24 @@ contract JunToken is ERC20 {
 
     function checkIssuer() external view returns (address) {
         return _soleIssuer;
+    }
+
+    function award(address awardUser) external onlyIssuer {
+        address tempAwardUser;
+        uint256 currentBlock = block.number;
+
+        if (awardUser == address(0)) {
+            tempAwardUser = msg.sender;
+        }else {
+            tempAwardUser = awardUser;
+        }
+
+        if (currentBlock > lastAwardBlock) {
+            uint256 awardAmount = currentBlock - lastAwardBlock;
+            _mint(tempAwardUser, awardAmount);
+            lastAwardBlock = block.number;
+            userBalance[tempAwardUser] = ERC20(this).balanceOf(tempAwardUser);
+            emit Award(awardAmount);
+        }
     }
 }
