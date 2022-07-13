@@ -63,6 +63,16 @@ contract JunToken is ERC20 {
         }
     }
 
+    function checkUserBalance(address _target) external view returns (uint256) {
+        address tempUser;
+        if (_target == address(0)) {
+            tempUser = msg.sender;
+        }else {
+            tempUser = _target;
+        }
+        return ERC20(this).balanceOf(tempUser);
+    }
+
     function transferIssuer(address newIssuer) external onlyIssuer {
         require(newIssuer != address(0), "Invalid new issuer!");
         _soleIssuer = newIssuer;
