@@ -94,7 +94,7 @@ describe("JunToken", function () {
             expect(await jtb.userBalance(owner.address)).to.equal(BigNumber.from("100000"));
             expect(await jtb.lastAwardBlock()).to.equal(await time.latestBlock());
             await expect(jtb.connect(dev).award(owner.address)).to.reverted;
-            await jtb.award(dev.address);
+            await expect(jtb.award(dev.address)).to.emit(jtb, "Award");
             let currentBlock = await jtb.lastAwardBlock();
             expect(await jtb.userBalance(dev.address)).to.equal(BigNumber.from(currentBlock).sub(initBlock));
         });
