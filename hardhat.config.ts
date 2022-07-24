@@ -14,6 +14,12 @@ const config: HardhatUserConfig = {
       accounts: ['90620ab73552e543d65ca08251e0a60c753bbed07363c99b29b5af5242708028']
       // gasPrice: 20000000000,
       // accounts: {mnemonic: mnemonic}
+    },
+    kccMainnet: {
+      url: ' https://rpc-mainnet.kcc.network',
+      chainId: 321,
+      // gasPrice: 20000000000,
+      accounts: ['90620ab73552e543d65ca08251e0a60c753bbed07363c99b29b5af5242708028'],
     }
   },
 
