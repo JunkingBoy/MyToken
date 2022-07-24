@@ -20,8 +20,8 @@ contract JunToken is ERC20 {
     error NotSufficientFunds(address caller);
 
     mapping(address => uint256) public userBalance;
-    mapping(address => address[]) public granteeByLicensor;
-    address[] public indexOfLicensor;
+    mapping(address => address[]) private granteeByLicensor;
+    address[] private indexOfLicensor;
 
     modifier onlyIssuer() {
         if (_soleIssuer != msg.sender) {
@@ -200,7 +200,19 @@ contract JunToken is ERC20 {
         return _soleIssuer;
     }
 
-    function checkLicensor() external view returns(uint256) {
+    function checkLicensorLength() external view returns (uint256) {
         return indexOfLicensor.length;
+    }
+
+    function checkLicensor() external view returns (address[] memory) {
+        return indexOfLicensor;
+    }
+
+    function checkGrantee(address _licensor) external view returns (address[] memory) {
+        return granteeByLicensor[_licensor];
+    }
+
+    function checkGranteeLength(address _licensor) external view returns (uint256) {
+        return granteeByLicensor[_licensor].length;
     }
 }
