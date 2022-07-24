@@ -200,7 +200,11 @@ contract JunToken is ERC20 {
         return _soleIssuer;
     }
 
-    function checkLicensor() external view returns(uint256) {
+    function checkLicensor() external view returns (uint256) {
         return indexOfLicensor.length;
+    }
+
+    function checkGranteeLength(address _licensor) external view returns (uint256) {
+        return granteeByLicensor[_licensor].length;
     }
 }

@@ -163,5 +163,12 @@ describe("JunToken", function () {
             await expect(jtb.removeWhiteList(dev.address, third.address)).to.emit(jtb, "RemoveWhiteList");
             await expect(jtb.removeWhiteList(owner.address, third.address)).to.not.emit(jtb, "RemoveWhiteList");
         });
+
+        it('call the function check length', async function () {
+            const { owner, dev, jtb } = await loadFixture(getJunToken);
+
+            await expect(jtb.addWhiteList(dev.address)).to.emit(jtb, "AddWhiteList");
+            expect(await jtb.checkGranteeLength(owner.address)).to.equal(1);
+        });
     });
 });
