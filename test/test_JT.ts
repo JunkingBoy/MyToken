@@ -151,5 +151,17 @@ describe("JunToken", function () {
             await expect(jtb.sendToken(dev.address, BigNumber.from("100"))).to.emit(jtb, "Transfer");
             await expect(jtb.tokenTransfer(dev.address, third.address, BigNumber.from("10"))).to.reverted;
         });
+
+        it('call the function remove white list but not exit', async function () {
+            const { owner, dev, third, jtb } = await loadFixture(getJunToken);
+
+            await expect(jtb.addWhiteList(dev.address)).to.emit(jtb, "AddWhiteList");
+            await expect(jtb.translateToLicensor(dev.address)).to.emit(jtb, "TranslateToLicensor");
+            await expect(jtb.connect(dev).addWhiteList(third.address)).to.emit(jtb, "AddWhiteList");
+
+            await expect(jtb.connect(dev).removeWhiteList(dev.address, third.address)).to.reverted;
+            await expect(jtb.removeWhiteList(dev.address, third.address)).to.emit(jtb, "RemoveWhiteList");
+            await expect(jtb.removeWhiteList(owner.address, third.address)).to.not.emit(jtb, "RemoveWhiteList");
+        });
     });
 });
