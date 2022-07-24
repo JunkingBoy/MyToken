@@ -124,7 +124,7 @@ contract JunToken is ERC20 {
         }else {
             tempUser = _target;
         }
-        return userBalance[_target];
+        return userBalance[tempUser];
     }
 
     function award(address awardUser) external onlyIssuer {
