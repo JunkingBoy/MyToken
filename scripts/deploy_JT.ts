@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 async function main() {
     const FJB = await ethers.getContractFactory("JunToken");
-    const fjb = await FJB.deploy("FJB", "FJB", BigNumber.from("10000000000000000000000000"));
+    const fjb = await FJB.deploy("FMJB", "FMJB", BigNumber.from("10000000000000000000000000"));
     console.log("fjb:\t" + fjb.address);
 }
 
