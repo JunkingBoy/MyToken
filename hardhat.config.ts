@@ -11,7 +11,7 @@ const config: HardhatUserConfig = {
     kccTest: {
       url: 'https://rpc-testnet.kcc.network',
       chainId: 322,
-      accounts: ['90620ab73552e543d65ca08251e0a60c753bbed07363c99b29b5af5242708028']
+      accounts: ['']
       // gasPrice: 20000000000,
       // accounts: {mnemonic: mnemonic}
     },
@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
       url: ' https://rpc-mainnet.kcc.network',
       chainId: 321,
       // gasPrice: 20000000000,
-      accounts: ['90620ab73552e543d65ca08251e0a60c753bbed07363c99b29b5af5242708028'],
+      accounts: [''],
     }
   },
 
