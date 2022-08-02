@@ -3,15 +3,18 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../bank/LocalBankFactory.sol";
+import "../interface/ILocalBankFactory.sol";
 
-contract CenterBank is Ownable {
+contract CenterBank is Ownable, ILocalBankFactory {
+    LocalBankFactory public localBankFactory;
+
     address private _chairMan;
-    address public localBankFactory;
+    address private _centerBank;
+    address private immutable localBankFactoryAddress;
     address public latestLocalBank;
 
-    mapping(address => address) public localBankAndFactory;
-
-    mapping(uint256 => address) private centerBankMap;
+    mapping(uint256 => address) private localBankMap;
 
     event Bank(address indexed _target);
     event ChangeBank(address indexed oldChairMan, address indexed newBank);
@@ -27,8 +30,10 @@ contract CenterBank is Ownable {
     }
 
     constructor() {
+        localBankFactory = LocalBankFactory(address(this));
+        localBankFactoryAddress = address(localBankFactory);
         _chairMan = msg.sender;
-        centerBankMap[0] = _chairMan;
+        _centerBank = address(this);
         emit Bank(_chairMan);
     }
 
@@ -38,7 +43,6 @@ contract CenterBank is Ownable {
         if (!isContract(_newChairMan)) {
             oldChairMan = _chairMan;
             _chairMan = _newChairMan;
-            centerBankMap[0] = _chairMan;
             emit ChangeBank(oldChairMan, _newChairMan);
         }
     }
@@ -61,7 +65,24 @@ contract CenterBank is Ownable {
         return (codehash != 0x0 && codehash != accountHash);
     }
 
-    function getCenterBank() external view returns (address) {
+    function createBank() CheckChairMan external returns (uint256, address) {
+        address _tempBank;
+        uint256 _tempIndex;
+        (_tempIndex, _tempBank) = ILocalBankFactory(localBankFactoryAddress).createBank();
+        latestLocalBank = _tempBank;
+        localBankMap[_tempIndex] = _tempBank;
+        return (_tempIndex, _tempBank);
+    }
+
+    function getChairMan() external view returns (address) {
         return _chairMan;
+    }
+
+    function getCenterBank() external view returns (address) {
+        return _centerBank;
+    }
+
+    function getLocalBankAddress() external view returns (address) {
+        return localBankFactoryAddress;
     }
 }

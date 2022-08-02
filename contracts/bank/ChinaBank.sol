@@ -8,7 +8,13 @@ contract ChinaBank {
         uint256 createTime;
     }
 
+    struct UserInfo{
+        uint256 amount;
+        uint256 depositTime;
+    }
+
     mapping(uint256 => BankInfo) public bankMap;
+    mapping(address => UserInfo) private userMap;
 
     event CreateBank(address _caller);
 
@@ -18,5 +24,9 @@ contract ChinaBank {
         emit CreateBank(msg.sender);
     }
 
+    function deposit(address account, uint256 amount) external returns (bool) {
+        bool result = false;
 
+        return result;
+    }
 }

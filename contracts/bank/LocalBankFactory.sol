@@ -2,26 +2,31 @@
 
 pragma solidity ^0.8.0;
 
-import "../authority/Licensor.sol";
 import "../bank/ChinaBank.sol";
 
-contract LocalBankFactory is Licensor {
+contract LocalBankFactory {
+    address private dependencyCenterBank;
     address public latestBank;
 
     address[] public localBank;
 
-    constructor(address _centerBank) {
-
+    modifier CheckDependencyCenterBank() {
+        require(msg.sender == dependencyCenterBank);
+        _;
     }
 
-    function createBank() external returns (address) {
+    constructor(address _centerBank) { dependencyCenterBank = _centerBank; }
+
+    function createBank() CheckDependencyCenterBank external returns (uint256, address) {
+        uint256 tempIndex;
         for (uint256 i = 0; i < 10; i++) {
             if (address(0) == localBank[i]) {
-                latestBank = address(new ChinaBank(address(centerBank), i));
+                latestBank = address(new ChinaBank(address(this), i));
+                tempIndex = i;
                 localBank[i] = latestBank;
                 break;
             }
         }
-        return latestBank;
+        return (tempIndex, latestBank);
     }
 }
