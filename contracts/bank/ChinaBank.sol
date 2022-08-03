@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.0;
 
+import "../token/JunToken.sol";
+
 contract ChinaBank {
     struct BankInfo{
         address originator;
@@ -13,14 +15,17 @@ contract ChinaBank {
         uint256 depositTime;
     }
 
+    JunToken public immutable junToken;
+
     mapping(uint256 => BankInfo) public bankMap;
     mapping(address => UserInfo) private userMap;
 
     event CreateBank(address _caller);
 
-    constructor(address _originator, uint256 _bankIndex) {
+    constructor(address _originator, uint256 _bankIndex, address _currency) {
         bankMap[_bankIndex].originator = _originator;
         bankMap[_bankIndex].createTime = block.timestamp;
+        junToken = JunToken(_currency);
         emit CreateBank(msg.sender);
     }
 

@@ -5,10 +5,11 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "../core/CenterBank.sol";
-import "../authority/Licensor.sol";
+import "../authority/CenterBank.sol";
+import "../authority/CheckPermission.sol";
+import "../authority/CheckBankPermission.sol";
 
-contract JunToken is ERC20, Licensor {
+contract JunToken is ERC20, CheckPermission, CheckBankPermission {
     using SafeMath for uint256;
 
     struct LocalBankInfo {
@@ -22,9 +23,9 @@ contract JunToken is ERC20, Licensor {
     event Burn(address indexed toObject, uint256 amount);
     event TransferFrom(address indexed fromObject, address indexed toObject, uint256 amount);
 
-    constructor(string memory _name, string memory _symbol, uint256 _initTotalCirculation) ERC20(_name, _symbol) Licensor() {
+    constructor(address _chairMan, string memory _name, string memory _symbol, uint256 _initTotalCirculation)
+    ERC20(_name, _symbol) CheckPermission(_chairMan) CheckBankPermission(_chairMan) {
         _mint(msg.sender, _initTotalCirculation);
-        Licensor.currency = address(this);
         emit Mint(msg.sender, _initTotalCirculation);
     }
 
@@ -47,7 +48,7 @@ contract JunToken is ERC20, Licensor {
         emit Burn(_localBank, _burnAmount);
     }
 
-    function ActionTransfer(address from, address to, uint256 amount) CheckLocalBank external {
+    function ActionTransfer(address from, address to, uint256 amount) external {
         require(address(0) != from, "JunToken: Invalid Address!");
         require(0 < amount, "JunToken: Invalid Amount!");
         if (address(0) == to) {
