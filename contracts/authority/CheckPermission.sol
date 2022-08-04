@@ -6,7 +6,7 @@ import "./ChairMan.sol";
 import "../interface/ICheckPermission.sol";
 
 contract CheckPermission is ICheckPermission {
-    ChairMan public chairMan;
+    ChairMan public immutable chairMan;
 
     event VoteChairMan(address indexed _chairMan);
 

@@ -37,4 +37,16 @@ contract CenterBank is CheckPermission {
         localBankInfoMap[_bankIndex]._startTime = block.timestamp;
         localBankInfoMap[_bankIndex]._endTime = 0;
     }
+
+    function actionMint(address _localBank, uint256 _mintAmount) CheckChairMan external {
+        ILocalBankFactory(localBankFactory).mintCoin(_localBank, _mintAmount);
+    }
+
+    function actionBurn(address _localBank, uint256 _burnAmount) CheckChairMan external {
+        ILocalBankFactory(localBankFactory).burnCoin(_localBank, _burnAmount);
+    }
+
+    function getLocalBankLength() external view returns (uint256) {
+        return indexOfLocalBank.length;
+    }
 }
