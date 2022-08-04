@@ -21,15 +21,10 @@ contract LocalBankFactory is CheckBankPermission, ILocalBankFactory {
         currencyAddress = _currency;
     }
 
-    function createBank() CheckCenterBank external returns (uint256, address) {
-        uint256 tempIndex;
-        for (uint256 i = 0; i < 10; i++) {
-            if (address(0) == localBank[i]) {
-                latestBank = address(new ChinaBank(address(this), i, currencyAddress));
-                tempIndex = i;
-                localBank[i] = latestBank;
-                break;
-            }
+    function createBank() external returns (uint256, address) {
+        uint256 tempIndex = localBank.length;
+        if (tempIndex < 10) {
+            latestBank = address(new ChinaBank(address(this), tempIndex, currencyAddress));
         }
         return (tempIndex, latestBank);
     }

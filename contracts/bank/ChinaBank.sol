@@ -61,4 +61,8 @@ contract ChinaBank {
         emit UserTransfer(msg.sender, _target, _amount);
         return true;
     }
+
+    function checkUserInfo(address _user) external returns (uint256) {
+        return userMap[_user].amount;
+    }
 }

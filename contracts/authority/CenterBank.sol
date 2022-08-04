@@ -29,13 +29,14 @@ contract CenterBank is CheckPermission {
         emit SetUpCenterBank(_chairMan);
     }
 
-    function createBank() CheckChairMan external {
+    function createBank() CheckChairMan external returns (uint256, address) {
         (uint256 _bankIndex, address _localBank) = ILocalBankFactory(localBankFactory).createBank();
         indexOfLocalBank.push(_localBank);
         localBankInfoMap[_bankIndex]._localBankIndex = _bankIndex;
         localBankInfoMap[_bankIndex]._localBankAddress = _localBank;
         localBankInfoMap[_bankIndex]._startTime = block.timestamp;
         localBankInfoMap[_bankIndex]._endTime = 0;
+        return (_bankIndex, _localBank);
     }
 
     function actionMint(address _localBank, uint256 _mintAmount) CheckChairMan external {
