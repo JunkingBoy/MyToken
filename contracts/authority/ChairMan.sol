@@ -67,6 +67,7 @@ contract ChairMan is Ownable {
         return (codehash != 0x0 && codehash != accountHash);
     }
 
+    // 未能解决出现隔断以后重复任职的查询
     function checkChairManInfo(address _targetChairMan) external returns (uint256, uint256, uint256) {
         if (initChairMan == _targetChairMan) {
             return (0, chairManMap[0]._startWorkingTime, chairManMap[0]._endWorkingTime);

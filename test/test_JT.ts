@@ -32,7 +32,7 @@ describe("JunToken", function () {
         // Create local bank
         let index: ContractTransaction, localBank: ContractTransaction = await centerBank.createBank();
         console.log(localBank);
-        console.log(localBank.toString());
+        console.log(typeof localBank);
 
         // Deploy china bank
         const ChinaBank = await ethers.getContractFactory("ChinaBank");
@@ -41,9 +41,6 @@ describe("JunToken", function () {
         // Get local bank
         let localBankObject: Contract
         localBankObject = await ChinaBank.attach(localBank.toString());
-
-        console.log(localBankObject);
-        console.log(localBankObject.address);
 
         return { owner, dev, third, chairMan, jtb, localBankFactory, centerBank, chinaBank, localBank };
     }
