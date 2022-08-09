@@ -5,18 +5,26 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ChairMan is Ownable {
-    struct chairManInfo{
+    struct chairManInfo {
         address _chairMan;
         uint256 _startWorkingTime;
         uint256 _endWorkingTime;
+    }
+
+    struct chairManTimeInfo {
+        uint256 _manIndex;
+        uint256 _startTime;
+        uint256 _endTime;
     }
 
     address public initChairMan;
     address public chairMan;
     address public theLastChairMan = address(0);
 
-    address[] public chairManIndex;
+    address[] public chairManIndex; // 最后一位始终是当前的主席
+    chairManTimeInfo[] public cmti; // 主席信息的结构体数组
     mapping(uint256 => chairManInfo) public chairManMap;
+    mapping(address => uint256[]) public chairManRepetition; // 记录重复任职的主席的任职周期 -> 记录历史
 
     event TranslateChairMan(address indexed _oldchairMan, address indexed _newchairMan);
 
@@ -45,6 +53,12 @@ contract ChairMan is Ownable {
             chairManMap[latestMapKey]._startWorkingTime = block.timestamp;
             chairManMap[latestMapKey]._endWorkingTime = 0;
             chairMan = _newChairMan;
+            for (uint256 i = 0; i < chairManIndex.length; i++) {
+                if (chairMan == chairManIndex[i]) {
+                    chairManRepetition[chairMan].push(i);
+                }
+            }
+            chairManIndex.push(chairMan);
             emit TranslateChairMan(theLastChairMan, chairMan);
         }
     }
@@ -69,19 +83,25 @@ contract ChairMan is Ownable {
 
     // 未能解决出现隔断以后重复任职的查询
     function checkChairManInfo(address _targetChairMan) external returns (uint256, uint256, uint256) {
-        if (initChairMan == _targetChairMan) {
-            return (0, chairManMap[0]._startWorkingTime, chairManMap[0]._endWorkingTime);
+        // 校验是否是当前主席
+        uint256 _tempLength = chairManIndex.length - 1;
+        if (_targetChairMan == chairManIndex[_tempLength]) {
+            return (_tempLength, chairManMap[_tempLength]._startWorkingTime, 0);
         }
-        uint256 mapKey;
-        for (uint256 i = 0; i < chairManIndex.length; i++) {
-            if (chairManIndex[i] == _targetChairMan) {
-                mapKey = i;
-            }
-        }
-        if (0 == mapKey) {
+        // 校验历史的任职周期 -> 注意类型以及数据持久性问题
+        uint256[] memory _tempArray = chairManRepetition[_targetChairMan];
+        if (0 == _tempArray.length) {
             return (0, 0, 0);
-        }else {
-            return (mapKey, chairManMap[mapKey]._startWorkingTime, chairManMap[mapKey]._endWorkingTime);
         }
+        uint256 _temp = 0;
+        for (uint256 i = 0; i < _tempArray.length; i++) {
+            cmti.push(chairManTimeInfo({
+                _manIndex: i,
+                _startTime: chairManMap[i]._startWorkingTime,
+                _endTime: chairManMap[i]._endWorkingTime
+            }));
+            _temp += 1;
+        }
+        return (_temp, cmti[_temp]._startTime, cmti[_temp]._endTime);
     }
 }
