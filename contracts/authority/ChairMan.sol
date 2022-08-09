@@ -81,7 +81,7 @@ contract ChairMan is Ownable {
         return (codehash != 0x0 && codehash != accountHash);
     }
 
-    // 未能解决出现隔断以后重复任职的查询
+    // 解决出现隔断以后重复任职的查询
     function checkChairManInfo(address _targetChairMan) external returns (uint256, uint256, uint256) {
         // 校验是否是当前主席
         uint256 _tempLength = chairManIndex.length - 1;
@@ -102,6 +102,7 @@ contract ChairMan is Ownable {
             }));
             _temp += 1;
         }
+        // 返回任职次数以及最后一次任职的开始时间和退休时间
         return (_temp, cmti[_temp]._startTime, cmti[_temp]._endTime);
     }
 }
