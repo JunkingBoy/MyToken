@@ -62,7 +62,7 @@ contract ChinaBank {
         return true;
     }
 
-    function checkUserInfo(address _user) external returns (uint256) {
+    function checkUserInfo(address _user) external view returns (uint256) {
         return userMap[_user].amount;
     }
 }
