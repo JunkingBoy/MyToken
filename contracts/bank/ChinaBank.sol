@@ -30,7 +30,7 @@ contract ChinaBank {
         emit CreateBank(msg.sender);
     }
 
-    function deposit( uint256 amount) external returns (bool) {
+    function deposit(uint256 amount) external returns (bool) {
         require(0 < amount, "Can't do that!");
         bool result = false;
         uint256 tempAmount = ERC20(junToken).balanceOf(msg.sender);
