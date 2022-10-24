@@ -77,7 +77,7 @@ contract JunToken is ERC20, CheckPermission, CheckBankPermission, IJunToken {
                     actionB = to;
                 }
             }
-            if (address(0) != actionA && address(0) != actionB) {
+            if (address(0) != actionA && address(0) != actionB && actionA != actionB) {
                 transferFrom(from, to, amount);
                 interBankTransfer[from].toBank = to;
                 interBankTransfer[from].transferAmount = interBankTransfer[from].transferAmount + amount;
